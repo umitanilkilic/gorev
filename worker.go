@@ -66,6 +66,29 @@ func (w *Worker) RemoveTaskByIndex(taskIndex int) error {
 	return nil
 }
 
+func (w *Worker) RemoveTaskByTaskID(taskID uint32) error {
+	//Find task index by taskID
+	taskIndex := -1
+	for i, t := range w.tasks {
+		if t.TaskID == taskID {
+			taskIndex = i
+			break
+		}
+	}
+	//Check if taskIndex is valid
+	if taskIndex == -1 {
+		return errors.New("task not found")
+	}
+	//Remove task from worker
+	w.tasks = append(w.tasks[:taskIndex], w.tasks[taskIndex+1:]...)
+
+	return nil
+}
+
+func (w *Worker) RemoveAllTasks() {
+	w.tasks = nil
+}
+
 func (w *Worker) performTasks() {
 	for {
 		select {
@@ -79,6 +102,7 @@ func (w *Worker) performTasks() {
 				}
 				w.RemoveTaskByIndex(k)
 			}
+			w.RemoveAllTasks()
 		}
 	}
 }
