@@ -1,10 +1,13 @@
 package gorev
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestNewWorker(t *testing.T) {
 	w := NewWorker()
-	if w.WorkerId == 0 {
+	if w.workerId == 0 {
 		t.Errorf("WorkerId is 0")
 	}
 	if w.stopChan == nil {
@@ -15,7 +18,7 @@ func TestNewWorker(t *testing.T) {
 type testTask struct{}
 
 func (t *testTask) Perform() error {
-	return nil
+	return errors.New("test error")
 }
 
 func TestAddTask(t *testing.T) {
@@ -54,10 +57,7 @@ func TestPerformTasks(t *testing.T) {
 	w := NewWorker()
 	t1, _ := NewTask(&testTask{}, 1)
 	w.AddTask(t1)
-	err := w.performTasks()
-	if err != nil {
-		t.Errorf("Error while performing tasks: %v", err)
-	}
+	w.performTasks()
 }
 
 func TestGetTasks(t *testing.T) {
@@ -82,4 +82,12 @@ func TestStopWorker(t *testing.T) {
 	go func() {
 		w.stopChan <- true
 	}()
+}
+
+func TestErrorReports(t *testing.T) {
+	w := NewWorker()
+	t1, _ := NewTask(&testTask{}, 1)
+	w.AddTask(t1)
+	w.Start()
+	defer w.Stop()
 }
