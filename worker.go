@@ -72,11 +72,12 @@ func (w *Worker) performTasks() {
 		case <-w.stopChan:
 			w.Stop() //Stop worker
 		default:
-			for _, t := range w.tasks {
+			for k, t := range w.tasks {
 				err := t.TaskInterface.Perform()
 				if err != nil {
 					w.errorReports <- ErrorReport{TaskID: t.TaskID, Error: err, TimeStamp: time.Now().Unix()}
 				}
+				w.RemoveTaskByIndex(k)
 			}
 		}
 	}
