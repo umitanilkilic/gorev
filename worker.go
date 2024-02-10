@@ -2,21 +2,40 @@ package gorev
 
 import (
 	"errors"
-	"fmt"
 	"sort"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type Worker struct {
-	WorkerId  uint32
+	workerId  uint32
 	tasks     []*Task
-	IsRunning bool
+	isRunning bool
 	stopChan  chan bool
+
+	errorReports chan ErrorReport
+}
+type ErrorReport struct {
+	TaskID    uint32
+	Error     error
+	TimeStamp int64
 }
 
 func NewWorker() *Worker {
-	return &Worker{WorkerId: uuid.New().ID(), stopChan: make(chan bool)}
+	return &Worker{workerId: uuid.New().ID(), stopChan: make(chan bool), errorReports: make(chan ErrorReport)}
+}
+
+func (w *Worker) GetWorkerId() uint32 {
+	return w.workerId
+}
+
+func (w *Worker) IsWorkerRunning() bool {
+	return w.isRunning
+}
+
+func (w *Worker) GetErrorReports() <-chan ErrorReport {
+	return w.errorReports
 }
 
 func (w *Worker) AddTask(task *Task) {
@@ -38,7 +57,7 @@ func (w *Worker) sortTasks() {
 
 func (w *Worker) RemoveTaskByIndex(taskIndex int) error {
 	//Check if taskIndex is valid
-	if taskIndex < 0 || taskIndex > len(w.tasks) {
+	if taskIndex < 0 || taskIndex >= len(w.tasks) {
 		return errors.New("invalid task index")
 	}
 	//Remove task from worker
@@ -47,20 +66,18 @@ func (w *Worker) RemoveTaskByIndex(taskIndex int) error {
 	return nil
 }
 
-func (w *Worker) performTasks() error {
-	var err error
+func (w *Worker) performTasks() {
 	for {
 		select {
 		case <-w.stopChan:
-			return nil
+			w.Stop() //Stop worker
 		default:
 			for _, t := range w.tasks {
-				err = t.TaskInterface.Perform()
+				err := t.TaskInterface.Perform()
 				if err != nil {
-					return fmt.Errorf("error while performing task: %v", err)
+					w.errorReports <- ErrorReport{TaskID: t.TaskID, Error: err, TimeStamp: time.Now().Unix()}
 				}
 			}
-			return nil
 		}
 	}
 }
@@ -70,22 +87,25 @@ func (w *Worker) GetTasks() []*Task {
 }
 
 func (w *Worker) Start() error {
-	if w.IsRunning {
+	if w.isRunning {
 		return errors.New("worker is already running")
 	}
 
 	go w.performTasks()
 
-	w.IsRunning = true
+	w.isRunning = true
 	return nil
 }
 
 func (w *Worker) Stop() error {
-	if !w.IsRunning {
+	if !w.isRunning {
 		return errors.New("worker is not running")
 	}
 	w.stopChan <- true
-	w.IsRunning = false
+	w.isRunning = false
+
+	close(w.stopChan)
+	close(w.errorReports)
 
 	return nil
 }

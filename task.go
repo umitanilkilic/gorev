@@ -7,18 +7,18 @@ import (
 )
 
 type Task struct {
-	TaskInterface TaskInterface
+	TaskInterface Tasker
 	Priority      int
 	TaskID        uint32
 	//TODO: timeout sistemi ekle
 	//TimeOut       time.Duration
 }
 
-type TaskInterface interface {
+type Tasker interface {
 	Perform() error
 }
 
-func NewTask(task TaskInterface, priority int) (*Task, error) {
+func NewTask(task Tasker, priority int) (*Task, error) {
 	if task == nil {
 		return nil, fmt.Errorf("task is nil")
 	}
