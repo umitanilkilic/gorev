@@ -9,7 +9,7 @@ import (
 type Task struct {
 	TaskInterface Tasker
 	Priority      int
-	TaskID        uint32
+	taskID        uint32
 	//TODO: timeout sistemi ekle
 	//TimeOut       time.Duration
 }
@@ -23,5 +23,9 @@ func NewTask(task Tasker, priority int) (*Task, error) {
 		return nil, fmt.Errorf("task is nil")
 	}
 	//return &Task{TaskInterface: task, Priority: priority, TimeOut: timeOut, TaskID: uuid.New().ID()}, nil
-	return &Task{TaskInterface: task, Priority: priority, TaskID: uuid.New().ID()}, nil
+	return &Task{TaskInterface: task, Priority: priority, taskID: uuid.New().ID()}, nil
+}
+
+func (t *Task) GetTaskID() uint32 {
+	return t.taskID
 }

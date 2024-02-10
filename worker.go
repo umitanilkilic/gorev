@@ -70,7 +70,7 @@ func (w *Worker) RemoveTaskByTaskID(taskID uint32) error {
 	//Find task index by taskID
 	taskIndex := -1
 	for i, t := range w.tasks {
-		if t.TaskID == taskID {
+		if t.taskID == taskID {
 			taskIndex = i
 			break
 		}
@@ -98,7 +98,7 @@ func (w *Worker) performTasks() {
 			for k, t := range w.tasks {
 				err := t.TaskInterface.Perform()
 				if err != nil {
-					w.errorReports <- ErrorReport{TaskID: t.TaskID, Error: err, TimeStamp: time.Now().Unix()}
+					w.errorReports <- ErrorReport{TaskID: t.taskID, Error: err, TimeStamp: time.Now().Unix()}
 				}
 				w.RemoveTaskByIndex(k)
 			}
