@@ -47,7 +47,7 @@ This package provides a worker implementation for managing and executing tasks c
 
 - **Priority-Based Task Execution:** Tasks are executed in descending order of priority.
 - **Concurrency:** Tasks are executed concurrently using goroutines.
-- **Error Handling:** Errors during task execution are logged and the worker continues with other tasks.
+- **Error Reporting**
 
 ## TODOs
 
