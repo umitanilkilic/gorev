@@ -22,12 +22,12 @@ This package provides a worker implementation for managing and executing tasks c
 
 1. Create a Worker:
    ```go
-   worker := NewWorker()
+   worker := gorev.NewWorker()
    ```
 2. Create Tasks:
    ```go
-   task1 := NewTask(myTaskFunction, 10) // Priority 10
-   task2 := NewTask(anotherTaskFunction, 5) // Priority 5
+   task1 := gorev.NewTask(&myTaskStruct, 10) // Priority 10
+   task2 := gorev.NewTask(&anotherTaskStruct, 5) // Priority 5
    ```
 3. Add Tasks to Worker:
    ```go
@@ -49,7 +49,7 @@ This package provides a worker implementation for managing and executing tasks c
 - **Concurrency:** Tasks are executed concurrently using goroutines.
 - **Error Handling:** Errors during task execution are logged and the worker continues with other tasks.
 
-**## TODOs**
+## TODOs
 
 - **Improve Task Sorting Efficiency:** Explore more efficient sorting algorithms for large task queues.
 - **Implement Task Timeouts:** Add a mechanism to handle tasks that exceed a specified timeout.
