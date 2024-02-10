@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/umitanilkilic/gorev)](https://goreportcard.com/report/github.com/umitanilkilic/gorev)
+[![Go Report Card](https://goreportcard.com/badge/github.com/umitanilkilic/gorev)](https://goreportcard.com/report/github.com/umitanilkilic/gorev) [![Go Reference](https://pkg.go.dev/badge/github.com/umitanilkilic/gorev.svg)](https://pkg.go.dev/github.com/umitanilkilic/gorev)
  # Gorev
 The `gorev` package provides a simple and efficient task management system in Go. It includes a worker structure for managing tasks with priorities and performing them asynchronously. This package is designed to be easy to use and customizable for various applications requiring task execution.
 ## Overview
