@@ -2,6 +2,7 @@ package gorev
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 )
 
@@ -147,4 +148,45 @@ func TestStartAndStopWorker(t *testing.T) {
 		t.Errorf("stopping function not working properly")
 	}
 
+}
+
+type ExampleTaskStruct1 struct{}
+
+func (t *ExampleTaskStruct1) Perform() error {
+	return nil
+}
+
+type ExampleTaskStruct2 struct{}
+
+func (t *ExampleTaskStruct2) Perform() error {
+	return errors.New("error ;(")
+}
+
+func TestGeneral(t *testing.T) {
+	// Create a new tasks
+	task1, err := NewTask(&ExampleTaskStruct1{}, 3)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	task2, err := NewTask(&ExampleTaskStruct2{}, 9)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Create a new worker
+	worker := NewWorker()
+
+	// Add tasks to the worker
+	worker.AddTask(task1)
+	worker.AddTask(task2)
+
+	// Start the worker
+	worker.Start()
+
+	// Error Report
+	fmt.Printf("%v", <-worker.GetErrorReports())
+
+	// Stop the worker
+	worker.Stop()
 }

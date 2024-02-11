@@ -23,7 +23,7 @@ type ErrorReport struct {
 }
 
 func NewWorker() *Worker {
-	return &Worker{workerId: uuid.New().ID(), stopChan: make(chan bool), errorReports: make(chan ErrorReport)}
+	return &Worker{workerId: uuid.New().ID(), stopChan: make(chan bool, 1), errorReports: make(chan ErrorReport)}
 }
 
 func (w *Worker) GetWorkerId() uint32 {
