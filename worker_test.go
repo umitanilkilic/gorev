@@ -115,3 +115,36 @@ func TestStopWorker(t *testing.T) {
 		t.Errorf("stopping function not working properly")
 	}
 }
+
+func TestStartAndStopWorker(t *testing.T) {
+	w := NewWorker()
+	t1, _ := NewTask(&testTask{}, 1)
+	t2, _ := NewTask(&testTask{}, 2)
+	w.AddTask(t1)
+	w.AddTask(t2)
+	err := w.Start()
+	if err != nil {
+		t.Errorf("starting function not working properly")
+	}
+	err = w.Stop()
+	if err != nil {
+		t.Errorf("stopping function not working properly")
+	}
+	err = w.Start()
+	if err != nil {
+		t.Errorf("starting function not working properly")
+	}
+	err = w.Start()
+	if err == nil {
+		t.Errorf("starting function not working properly")
+	}
+	err = w.Stop()
+	if err != nil {
+		t.Errorf("stopping function not working properly")
+	}
+	err = w.Stop()
+	if err == nil {
+		t.Errorf("stopping function not working properly")
+	}
+
+}

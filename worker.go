@@ -93,7 +93,6 @@ func (w *Worker) performTasks() {
 	for {
 		select {
 		case <-w.stopChan:
-			w.Stop() //Stop worker
 			return
 		default:
 			for k, t := range w.tasks {
@@ -129,9 +128,6 @@ func (w *Worker) Stop() error {
 	}
 	w.stopChan <- true
 	w.isRunning = false
-
-	close(w.stopChan)
-	close(w.errorReports)
 
 	return nil
 }
