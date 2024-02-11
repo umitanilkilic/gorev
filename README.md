@@ -19,28 +19,47 @@ This package provides a worker implementation for managing and executing tasks c
     - Checks if the worker is running.
 
 ## Usage
+   ```go
+   type ExampleTaskStruct1 struct{}
 
-1. Create a Worker:
-   ```go
-   worker := gorev.NewWorker()
-   ```
-2. Create Tasks:
-   ```go
-   task1 := gorev.NewTask(&myTaskStruct, 10) // Priority 10
-   task2 := gorev.NewTask(&anotherTaskStruct, 5) // Priority 5
-   ```
-3. Add Tasks to Worker:
-   ```go
-   worker.AddTask(task1)
-   worker.AddTask(task2)
-   ```
-4. Start the Worker:
-   ```go
-   worker.Start()
-   ```
-5. Stop the Worker (when needed):
-   ```go
-   worker.Stop()
+func (t *ExampleTaskStruct1) Perform() error {
+	return nil
+}
+
+type ExampleTaskStruct2 struct{}
+
+func (t *ExampleTaskStruct2) Perform() error {
+	return errors.New("error ;(")
+}
+
+func main() {
+	// Create a new tasks
+	task1, err := gorev.NewTask(&ExampleTaskStruct1{}, 3)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	task2, err := gorev.NewTask(&ExampleTaskStruct2{}, 9)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Create a new worker
+	worker := gorev.NewWorker()
+
+	// Add tasks to the worker
+	worker.AddTask(task1)
+	worker.AddTask(task2)
+
+	// Start the worker
+	worker.Start()
+
+	// Error Report
+	fmt.Printf("%v", <-worker.GetErrorReports())
+
+	// Stop the worker
+	worker.Stop()
+}
    ```
 
 ## Notes
