@@ -94,6 +94,7 @@ func (w *Worker) performTasks() {
 		select {
 		case <-w.stopChan:
 			w.Stop() //Stop worker
+			return
 		default:
 			for k, t := range w.tasks {
 				err := t.TaskInterface.Perform()
